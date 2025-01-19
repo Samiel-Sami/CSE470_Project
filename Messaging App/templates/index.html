@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Auth System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4c8bf5, #6f42c1);
+      color: #fff;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+      background: #fff;
+      color: #333;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .btn-dark {
+      background-color: #343a40;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Home Page</h2>
+    <form action="/register" method="get" style="display: inline;">
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <form action="/login" method="get" style="display: inline;">
+      <button type="submit" class="btn btn-dark">Login</button>
+    </form>
+  </div>
+</body>
+</html>

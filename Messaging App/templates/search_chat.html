@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #000cb3;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .results h3 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .message-list {
+            list-style: none;
+            padding: 0;
+        }
+        .message-list li {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            background: #f5f5f5;
+        }
+        .no-results {
+            color: #888;
+            font-style: italic;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Search Chat Messages</h1>
+
+        <!-- Search Form -->
+        <form method="get" action="/search_chat">
+            <input 
+                type="text" 
+                name="query" 
+                placeholder="Enter your search query here..." 
+                value="{{ request.args.get('query', '') }}">
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Search Results -->
+        <div class="results">
+            {% if messages %}
+                <h3>Search Results:</h3>
+                <ul class="message-list">
+                    {% for message in messages %}
+                        <li>{{ message.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                {% if request.args.get('query') %}
+                    <p class="no-results">No messages found for "{{ request.args.get('query') }}".</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <a href="/chat" class="back-button">Back to Chat</a>
+    </div>
+</body>
+
+</html>

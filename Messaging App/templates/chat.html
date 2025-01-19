@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Chat App</title>
+    <style>
+        :root {
+            --bg-light: #f9f9f9;
+            --text-light: #000;
+            --bg-dark: #2c2c2c;
+            --text-dark: #fff;
+            --primary: #4caf50;
+            --secondary: #555;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #messages {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        body.dark-mode #messages {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+        }
+
+        .message {
+            margin-bottom: 10px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #fff;
+            background-color: var(--primary);
+        }
+
+        button#logout {
+            background-color: #f44336;
+        }
+
+        button#recent_chats, button#search_chat {
+            background-color: #3f51b5;
+        }
+
+        .controls {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .controls button {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body class="light-mode">
+<h1>Welcome to chat room {{ room }}</h1>
+
+<div id="messages"></div>
+
+<form id="message_input_form">
+    <input type="text" id="message_input" placeholder="Enter your message here">
+    <button type="submit">Send</button>
+    <button id="logout">Logout</button>
+    <button id="recent_chats">Recent Chats</button>
+    <button id="search_chat">Search Chats</button>
+    <button id="chat_history">Chat History</button>
+</form>
+
+<div class="controls">
+    <button id="toggle_mode">Toggle Dark/Light Mode</button>
+    <button id="increase_font">Increase Font Size</button>
+    <button id="decrease_font">Decrease Font Size</button>
+</div>
+
+<script>
+    // Dark/Light Mode Toggle
+    const body = document.body;
+    const toggleModeButton = document.getElementById('toggle_mode');
+    toggleModeButton.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        body.classList.toggle('light-mode');
+    });
+
+    // Font Size Adjustment
+    const messages = document.getElementById('messages');
+    const increaseFontButton = document.getElementById('increase_font');
+    const decreaseFontButton = document.getElementById('decrease_font');
+    let fontSize = 16;
+
+    increaseFontButton.addEventListener('click', () => {
+        fontSize += 2;
+        messages.style.fontSize = `${fontSize}px`;
+    });
+
+    decreaseFontButton.addEventListener('click', () => {
+        fontSize = Math.max(12, fontSize - 2);
+        messages.style.fontSize = `${fontSize}px`;
+    });
+
+    // JavaScript to handle the logout button click
+    document.getElementById("logout").addEventListener("click", function() {
+        window.location.href = "/logout";
+    });
+
+    // JavaScript for Recent Chats
+    document.getElementById("recent_chats").addEventListener("click", function() {
+        window.location.href = "/recent_chats"; 
+    });
+
+    // JavaScript for Search Chats
+    document.getElementById("search_chat").addEventListener("click", function() {
+        window.location.href = "/search_chat"; 
+    });
+
+    // JavaScript for History 
+    document.getElementById("chat_history").addEventListener("click", function() {
+        window.location.href = "/chat_history"; 
+    });
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+<script>
+    const socket = io.connect("http://127.0.0.1:5000");
+
+    socket.on('connect', function () {
+        socket.emit('join_room', {
+            username: "{{ username }}",
+            room: "{{ room }}"
+        });
+
+        let message_input = document.getElementById('message_input');
+
+        document.getElementById('message_input_form').onsubmit = function (e) {
+            e.preventDefault();
+            let message = message_input.value.trim();
+            if (message.length) {
+                socket.emit('send_message', {
+                    username: "{{ username }}",
+                    room: "{{ room }}",
+                    message: message
+                });
+            }
+            message_input.value = '';
+            message_input.focus();
+        }
+    });
+
+    window.onbeforeunload = function () {
+        socket.emit('leave_room', {
+            username: "{{ username }}",
+            room: "{{ room }}"
+        });
+    };
+
+    socket.on('receive_message', function (data) {
+        const newNode = document.createElement('div');
+        newNode.classList.add('message');
+        newNode.innerHTML = `<b>${data.username}:&nbsp;</b> ${data.message}`;
+        document.getElementById('messages').appendChild(newNode);
+    });
+
+    socket.on('join_room_announcement', function (data) {
+        const newNode = document.createElement('div');
+        newNode.classList.add('message');
+        newNode.innerHTML = `<b>${data.username}</b> is active`;
+        document.getElementById('messages').appendChild(newNode);
+    });
+
+    socket.on('leave_room_announcement', function (data) {
+        const newNode = document.createElement('div');
+        newNode.classList.add('message');
+        newNode.innerHTML = `<b>${data.username}</b> is not active`;
+        document.getElementById('messages').appendChild(newNode);
+    });
+</script>
+</body>
+</html>

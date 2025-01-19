@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            background-color: #e6f7ff;
+            color: #333;
+        }
+
+        .chat-message .meta {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .chat-message .content {
+            font-size: 14px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-container a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+
+        .button-container a.history-button {
+            background-color: #a728a7;
+        }
+
+        .button-container a:hover {
+            opacity: 0.8;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Chat History</div>
+        <div class="chat-messages">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="chat-message">
+                    <div class="meta">
+                        <b>{{ message.sender }}</b> → <b>{{ message.recipient or 'All' }}</b> | {{ message.timestamp }}
+                    </div>
+                    <div class="content">{{ message.message }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No messages found.</p>
+            {% endif %}
+        </div>
+        <div class="button-container">
+            <a href="/recent_chats" class="back-button">Recent Chats</a>
+            <!--<a href="/chat_history" class="history-button">View Chat History</a>-->
+        </div>
+        <a href="/chat" class="back-button">Back to Chat</a>
+    </div>
+</body>
+</html>
